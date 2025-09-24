@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* AgriPredict Design System - Farm & Nature Inspired
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 39 41% 96%;        /* #f9f6f1 - Light cream background */
+    --foreground: 140 20% 25%;       /* Dark forest green for text */
+
+    --card: 39 41% 98%;              /* Slightly lighter card background */
+    --card-foreground: 140 20% 25%;
+
+    --popover: 39 41% 98%;
+    --popover-foreground: 140 20% 25%;
+
+    --primary: 140 25% 35%;          /* #4a7856 - Forest green primary */
+    --primary-foreground: 39 41% 96%;
+
+    --secondary: 35 35% 82%;         /* #d9cbb6 - Warm beige secondary */
+    --secondary-foreground: 140 20% 25%;
+
+    --muted: 35 25% 88%;             /* Lighter muted tones */
+    --muted-foreground: 140 15% 45%;
+
+    --accent: 50 45% 75%;            /* Warm gold accent */
+    --accent-foreground: 140 20% 25%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 39 41% 96%;
+
+    --border: 35 25% 85%;            /* Soft beige borders */
+    --input: 35 25% 85%;
+    --ring: 140 25% 35%;
+
+    /* Custom AgriPredict tokens */
+    --gradient-hero: linear-gradient(135deg, hsl(140 25% 35%), hsl(140 30% 45%));
+    --gradient-card: linear-gradient(180deg, hsl(39 41% 98%), hsl(35 35% 94%));
+    --shadow-soft: 0 4px 20px hsl(140 25% 35% / 0.1);
+    --shadow-card: 0 2px 10px hsl(140 25% 35% / 0.08);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 140 30% 8%;         /* Dark forest background */
+    --foreground: 39 41% 96%;         /* Light cream foreground */
+
+    --card: 140 30% 10%;
+    --card-foreground: 39 41% 96%;
+
+    --popover: 140 30% 10%;
+    --popover-foreground: 39 41% 96%;
+
+    --primary: 39 41% 96%;            /* Light cream primary in dark mode */
+    --primary-foreground: 140 30% 8%;
+
+    --secondary: 140 25% 15%;         /* Darker forest secondary */
+    --secondary-foreground: 39 41% 96%;
+
+    --muted: 140 25% 15%;
+    --muted-foreground: 35 20% 70%;
+
+    --accent: 50 45% 65%;             /* Warmer gold accent in dark */
+    --accent-foreground: 140 30% 8%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 39 41% 96%;
+
+    --border: 140 25% 15%;
+    --input: 140 25% 15%;
+    --ring: 39 41% 96%;
+
+    --sidebar-background: 140 30% 8%;
+    --sidebar-foreground: 39 41% 96%;
+    --sidebar-primary: 50 45% 65%;
+    --sidebar-primary-foreground: 140 30% 8%;
+    --sidebar-accent: 140 25% 15%;
+    --sidebar-accent-foreground: 39 41% 96%;
+    --sidebar-border: 140 25% 15%;
+    --sidebar-ring: 39 41% 96%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
