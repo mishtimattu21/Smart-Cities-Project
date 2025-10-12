@@ -5,7 +5,7 @@ import heroImage from "@/assets/hero-farm-bg.jpg";
 const HeroSection = () => {
   return (
     <section 
-      className="relative min-h-[80vh] flex items-center justify-center bg-cover bg-center bg-no-repeat"
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${heroImage})` }}
     >
       {/* Overlay */}
@@ -22,9 +22,9 @@ const HeroSection = () => {
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 shadow-soft">
-            <Link to="/rates">View Live Rates</Link>
+            <Link to="/knowledge">View Knowledge Center</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
+          <Button asChild variant="outline" size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary">
             <Link to="/prediction">Get Predictions</Link>
           </Button>
         </div>

@@ -6,9 +6,7 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Home", link: "/" },
-    { label: "Live Rates", link: "/rates" },
     { label: "Prediction", link: "/prediction" },
-    { label: "Market Map", link: "/map" },
     { label: "Knowledge Center", link: "/knowledge" },
   ];
 

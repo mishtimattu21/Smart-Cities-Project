@@ -14,6 +14,7 @@ export const LanguageSelector = () => {
   const languages = [
     { code: "en", name: "English" },
     { code: "hi", name: "हिंदी" },
+    { code: "mr", name: "मराठी" },
     { code: "ta", name: "தமிழ்" },
   ];
 

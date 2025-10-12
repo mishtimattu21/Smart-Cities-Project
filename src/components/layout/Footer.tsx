@@ -25,9 +25,7 @@ const Footer = () => {
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li><Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">Home</Link></li>
-              <li><Link to="/rates" className="text-muted-foreground hover:text-primary transition-colors text-sm">Live Rates</Link></li>
               <li><Link to="/prediction" className="text-muted-foreground hover:text-primary transition-colors text-sm">Price Prediction</Link></li>
-              <li><Link to="/map" className="text-muted-foreground hover:text-primary transition-colors text-sm">Market Map</Link></li>
               <li><Link to="/knowledge" className="text-muted-foreground hover:text-primary transition-colors text-sm">Knowledge Center</Link></li>
             </ul>
           </div>
@@ -36,7 +34,6 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Our Services</h4>
             <ul className="space-y-2">
-              <li><span className="text-muted-foreground text-sm">Real-time Market Data</span></li>
               <li><span className="text-muted-foreground text-sm">AI Price Predictions</span></li>
               <li><span className="text-muted-foreground text-sm">Weather Analytics</span></li>
               <li><span className="text-muted-foreground text-sm">Market Intelligence</span></li>
@@ -58,7 +55,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground text-sm">New Delhi, India</span>
+                <span className="text-muted-foreground text-sm">Tamil Nadu, India</span>
               </div>
             </div>
           </div>

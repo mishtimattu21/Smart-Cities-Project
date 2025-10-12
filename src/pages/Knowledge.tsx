@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, CloudRain, Award, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchWeather, type WeatherSummary } from "@/lib/weather";
 
 const Knowledge = () => {
   const schemes = [
@@ -52,6 +54,52 @@ const Knowledge = () => {
     { title: "Market Linkage and Price Discovery", category: "Marketing", readTime: "4 min read" },
     { title: "Precision Agriculture Technologies", category: "Technology", readTime: "12 min read" }
   ];
+
+  const [weather, setWeather] = useState<WeatherSummary | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setWeatherLoading(true);
+    const load = async () => {
+      try {
+        if (navigator.geolocation) {
+          await new Promise<void>((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+              async (pos) => {
+                if (!mounted) return resolve();
+                try {
+                  const data = await fetchWeather({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+                  if (mounted) setWeather(data);
+                } catch (e) {
+                  if (mounted) setWeatherError(e instanceof Error ? e.message : "Failed to load weather");
+                }
+                resolve();
+              },
+              async () => {
+                try {
+                  const data = await fetchWeather({ location: "Pune" });
+                  if (mounted) setWeather(data);
+                } catch (e) {
+                  if (mounted) setWeatherError(e instanceof Error ? e.message : "Failed to load weather");
+                }
+                resolve();
+              },
+              { enableHighAccuracy: false, timeout: 5000, maximumAge: 60_000 }
+            );
+          });
+        } else {
+          const data = await fetchWeather({ location: "Pune" });
+          if (mounted) setWeather(data);
+        }
+      } finally {
+        if (mounted) setWeatherLoading(false);
+      }
+    };
+    void load();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -109,32 +157,45 @@ const Knowledge = () => {
             <div className="space-y-4">
               {/* Weather Chart Placeholder */}
               <div className="h-48 bg-muted rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <CloudRain className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Weather Chart Placeholder</p>
-                </div>
+                {weatherLoading ? (
+                  <div className="text-muted-foreground">Detecting your location…</div>
+                ) : weather ? (
+                  <div className="text-center">
+                    <CloudRain className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-muted-foreground">
+                      {weather.location.name}{weather.location.country ? `, ${weather.location.country}` : ""}
+                    </p>
+                  </div>
+                ) : weatherError ? (
+                  <div className="text-red-600 text-sm">{weatherError}</div>
+                ) : (
+                  <div className="text-center">
+                    <CloudRain className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-muted-foreground">Weather unavailable</p>
+                  </div>
+                )}
               </div>
               
               {/* Weather Summary */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-card border border-border rounded-lg text-center">
                   <div className="text-sm text-muted-foreground">This Week Rainfall</div>
-                  <div className="text-lg font-bold text-primary">127mm</div>
-                  <div className="text-xs text-green-600">+15% vs normal</div>
+                  <div className="text-lg font-bold text-primary">{weather ? `${weather.rainfallMmWeek}mm` : "–"}</div>
+                  <div className="text-xs text-green-600">{weather ? "+vs normal" : ""}</div>
                 </div>
                 <div className="p-3 bg-card border border-border rounded-lg text-center">
                   <div className="text-sm text-muted-foreground">Avg Temperature</div>
-                  <div className="text-lg font-bold text-primary">28.5°C</div>
+                  <div className="text-lg font-bold text-primary">{weather ? `${weather.avgTempC}°C` : "–"}</div>
                   <div className="text-xs text-yellow-600">Normal range</div>
                 </div>
                 <div className="p-3 bg-card border border-border rounded-lg text-center">
                   <div className="text-sm text-muted-foreground">Humidity</div>
-                  <div className="text-lg font-bold text-primary">72%</div>
+                  <div className="text-lg font-bold text-primary">{weather ? `${weather.humidityPct}%` : "–"}</div>
                   <div className="text-xs text-blue-600">Optimal</div>
                 </div>
                 <div className="p-3 bg-card border border-border rounded-lg text-center">
                   <div className="text-sm text-muted-foreground">Wind Speed</div>
-                  <div className="text-lg font-bold text-primary">12 km/h</div>
+                  <div className="text-lg font-bold text-primary">{weather ? `${weather.windKmh} km/h` : "–"}</div>
                   <div className="text-xs text-green-600">Favorable</div>
                 </div>
               </div>
