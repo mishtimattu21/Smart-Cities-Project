@@ -67,23 +67,17 @@ async function fetchOpenMeteoWeather(lat: number, lon: number) {
 }
 
 export async function fetchWeather(params: { location?: string; latitude?: number; longitude?: number } = {}): Promise<WeatherSummary> {
+  // Hardcode Chennai as the location
   const qs = new URLSearchParams();
-  if (params.location) qs.set("location", params.location);
-  if (params.latitude != null) qs.set("latitude", String(params.latitude));
-  if (params.longitude != null) qs.set("longitude", String(params.longitude));
+  qs.set("location", "Chennai");
 
-  // Try serverless first (production)
+  // Try local weather API server first (development)
   try {
-    const json = await fetchJsonSafe(`/api/weather?${qs.toString()}`);
+    const json = await fetchJsonSafe(`http://localhost:3001/api/weather?${qs.toString()}`);
     return json as WeatherSummary;
   } catch {
-    // Fallback for local dev: call Open-Meteo directly
-    const loc = params.location ?? "Pune";
-    const coords =
-      params.latitude != null && params.longitude != null
-        ? await reverseGeocodeOpenMeteo(params.latitude, params.longitude)
-        : await geocodeOpenMeteo(loc);
-
+    // Fallback: call Open-Meteo directly for Chennai
+    const coords = await geocodeOpenMeteo("Chennai");
     const metrics = await fetchOpenMeteoWeather(coords.latitude, coords.longitude);
     return {
       location: { name: coords.name, latitude: coords.latitude, longitude: coords.longitude },
