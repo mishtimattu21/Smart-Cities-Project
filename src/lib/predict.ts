@@ -16,24 +16,41 @@ export async function predictOnion(steps = 7, payload?: {
 }): Promise<OnionForecast> {
   // Prefer serverless endpoint if available
   try {
-    const body = JSON.stringify({ steps, commodity: payload?.commodity || "Onion", grade: "FAQ", ...payload });
-    const preferBase = (import.meta as any).env?.VITE_PREDICT_API_BASE as string | undefined;
-    const base = preferBase?.replace(/\/$/, "") || "";
-    const primary = base ? `${base}/predict` : `/api/predict`;
-    const fallback = base ? `/api/predict` : undefined;
-    let res = await fetch(primary, { method: "POST", headers: { "Content-Type": "application/json" }, body });
-    if (!res.ok && fallback) {
-      try { res = await fetch(fallback, { method: "POST", headers: { "Content-Type": "application/json" }, body }); } catch {}
-    }
+    const dateISO = payload?.dateISO;
+    const date = dateISO ? new Date(dateISO).toISOString().slice(0, 10) : undefined; // YYYY-MM-DD
+    const body = JSON.stringify({ steps, commodity: payload?.commodity || "Onion", grade: "FAQ", ...payload, date, dateISO });
+    const base = "https://acb69f591085.ngrok-free.app";
+    const url = `${base}/predict`;
+    const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body });
     if (!res.ok) throw new Error(String(res.status));
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) throw new Error("Non-JSON");
-    return (await res.json()) as OnionForecast;
-  } catch {
-    // Dev/local fallback when serverless runtime isn't available
-    const base = 40;
-    const noise = (i: number) => Math.sin(i * 0.7) * 2.5;
-    return { commodity: "Onion", steps, predictions: Array.from({ length: steps }, (_, i) => base + noise(i)) };
+    try {
+      const raw = await res.json();
+      // Normalize various possible shapes into OnionForecast
+      let predictions: number[] | undefined = Array.isArray(raw?.predictions)
+        ? raw.predictions
+        : undefined;
+      if (!predictions) {
+        if (Array.isArray(raw?.prices)) predictions = raw.prices;
+        else if (Array.isArray(raw?.predicted)) predictions = raw.predicted;
+        else if (typeof raw?.price === "number") predictions = [Number(raw.price)];
+        else if (typeof raw?.prediction === "number") predictions = [Number(raw.prediction)];
+        else if (typeof raw?.predicted_price === "number") predictions = [Number(raw.predicted_price)];
+      }
+      const commodity = (raw?.commodity as string) || (payload?.commodity || "Onion");
+      const stepsNum = Number(raw?.steps) || (Array.isArray(predictions) ? predictions.length || steps : steps);
+      if (!predictions || predictions.length === 0) {
+        return { commodity, steps: stepsNum, predictions: [] } as OnionForecast;
+      }
+      return { commodity, steps: stepsNum, predictions, priceBounds: raw?.priceBounds } as OnionForecast;
+    } catch {
+      const text = await res.text();
+      try { return JSON.parse(text) as OnionForecast; } catch {
+        throw new Error("Unexpected response from prediction API");
+      }
+    }
+  } catch (err) {
+    // Surface real errors to the UI instead of returning placeholder data
+    throw err instanceof Error ? err : new Error("Prediction request failed");
   }
 }
 
@@ -97,9 +114,8 @@ export async function fetchCommodityMeta(
   if (filters?.state) qs.set("state", filters.state);
   if (filters?.district) qs.set("district", filters.district);
   try {
-    // Prefer local Flask server if running
-    const preferLocal = (import.meta as any).env?.VITE_PREDICT_API_BASE as string | undefined;
-    const base = preferLocal?.replace(/\/$/, "") || "";
+    // Prefer configured/external API base, fallback to local proxy
+    const base = "https://acb69f591085.ngrok-free.app";
     const url = base ? `${base}/meta?${qs.toString()}` : `/api/commodity_meta?${qs.toString()}`;
     const alt = base ? `/api/commodity_meta?${qs.toString()}` : undefined;
     let res = await fetch(url);

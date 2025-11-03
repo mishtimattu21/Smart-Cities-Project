@@ -317,8 +317,8 @@ const Prediction = () => {
                     <div className="text-muted-foreground">Running model…</div>
                   ) : error ? (
                     <div className="text-red-600 text-sm">{error}</div>
-                  ) : predictions ? (
-                    <div className="text-2xl font-bold text-primary">₹{predictions[0].toFixed(2)}/kg</div>
+                  ) : (Array.isArray(predictions) && predictions.length > 0 && typeof predictions[0] === 'number') ? (
+                    <div className="text-2xl font-bold text-primary">₹{Number(predictions[0]).toFixed(2)}/quintal</div>
                   ) : (
                     <div className="text-muted-foreground">No data</div>
                   )}
@@ -329,14 +329,6 @@ const Prediction = () => {
                   <div className="text-lg font-semibold text-accent-foreground">89%</div>
                   <div className="w-full bg-muted rounded-full h-2 mt-2">
                     <div className="bg-primary h-2 rounded-full" style={{ width: '89%' }} />
-                  </div>
-                </div>
-                
-                <div className="bg-card p-4 rounded-lg border border-border">
-                  <div className="text-sm text-muted-foreground mb-1">Trend Direction</div>
-                  <div className="text-lg font-semibold text-green-600 flex items-center gap-1">
-                    <TrendingUp className="w-4 h-4" />
-                    {predictions ? 'Bullish (+12.5%)' : 'Pending'}
                   </div>
                 </div>
 
@@ -350,10 +342,7 @@ const Prediction = () => {
                 </div>
               </div>
 
-              <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                <Download className="w-4 h-4 mr-2" />
-                Download Report (PDF)
-              </Button>
+              
             </CardContent>
           </Card>
         )}

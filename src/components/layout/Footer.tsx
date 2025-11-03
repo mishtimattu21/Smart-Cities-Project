@@ -12,12 +12,6 @@ const Footer = () => {
             <p className="text-muted-foreground text-sm leading-relaxed mb-4">
               Empowering farmers with AI-powered insights, real-time market data, and comprehensive agricultural knowledge to make informed decisions.
             </p>
-            <div className="flex space-x-4">
-              <Facebook className="w-5 h-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
-              <Twitter className="w-5 h-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
-              <Instagram className="w-5 h-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
-              <Linkedin className="w-5 h-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
-            </div>
           </div>
 
           {/* Quick Links */}
